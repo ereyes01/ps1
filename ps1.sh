@@ -20,6 +20,7 @@ bold_green="\033[1;32m"
 bold_blue="\033[1;34m"
 red="\033[0;31m"
 green="\033[0;32m"
+white="\033[0;37m"
 default_color="\033[00m"
 
 ps1_branch()
@@ -39,6 +40,12 @@ ps1_staged()
     git diff --quiet --cached &> /dev/null || echo -n "*"
 }
 
+ps1_untracked()
+{
+    git branch &>/dev/null || return
+    git status --porcelain 2> /dev/null | grep -q ^?? && echo -n '*'
+}
+
 ps1_git_with_rc()
 {
     prev_rc=$?
@@ -47,8 +54,8 @@ ps1_git_with_rc()
     working_dir=${bold_blue}'\w'
 
     echo -e ${bold_cyan}$(ps1_branch)\
-            ${green}$(ps1_staged)''${red}$(ps1_unstaged)
-    echo -e ${bold_cyan}${prev_rc}'>'${default_color}' '
+            ${green}$(ps1_staged)${red}$(ps1_unstaged)${white}$(ps1_untracked)
+    echo -e ${bold_cyan}${prev_rc}'> '${default_color}
 }
 
 ps1_prefix()
