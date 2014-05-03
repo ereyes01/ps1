@@ -12,25 +12,52 @@
 # The 0 in the second line is the return value of the previous command.
 # If you're not in a git repository, you won't see the (git branch)
 
-# To use in your .bashrc, source this file in that script and add:
-#
-# PS1=$(ps1_output)
+# To use in your .bashrc, source this file.
 
-parse_git_branch()
+bold_cyan="\033[01;36m"
+bold_red="\033[1;31m"
+bold_green="\033[1;32m"
+bold_blue="\033[1;34m"
+red="\033[0;31m"
+green="\033[0;32m"
+default_color="\033[00m"
+
+ps1_branch()
 {
-	git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
 
-ps1_rc_git()
+ps1_unstaged()
 {
-	old_rc=$?
-	echo -e '\e[0;96m'"$(parse_git_branch)"
-	echo $old_rc"> "
-	return $old_rc
+    git branch &>/dev/null || return
+    git diff --quiet &> /dev/null || echo -n "*"
 }
 
-ps1_output()
+ps1_staged()
 {
-    echo '
-\[\033[01;32m\]\u@\h\[\033[01;34m\] \w $(ps1_rc_git)\[\033[00m\]'
+    git branch &>/dev/null || return
+    git diff --quiet --cached &> /dev/null || echo -n "*"
 }
+
+ps1_git_with_rc()
+{
+    prev_rc=$?
+
+    user_host=${bold_green}'\u@\h'
+    working_dir=${bold_blue}'\w'
+
+    echo -e ${bold_cyan}$(ps1_branch)\
+            ${green}$(ps1_staged)''${red}$(ps1_unstaged)
+    echo -e ${bold_cyan}${prev_rc}'>'${default_color}' '
+}
+
+ps1_prefix()
+{
+    user_host='\u@\h'
+    working_dir='\w'
+    echo
+    echo -n '\['${bold_green}'\]'${user_host}\
+            '\['${bold_blue}'\]'${working_dir}
+}
+
+export PS1=$(ps1_prefix)' $(ps1_git_with_rc)'
