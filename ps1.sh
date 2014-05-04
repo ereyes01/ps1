@@ -48,7 +48,7 @@ ps1_untracked()
     git status --porcelain 2> /dev/null | grep -q ^?? && echo -n '*'
 }
 
-ps1_git_with_rc()
+ps1_git()
 {
     prev_rc=$?
 
@@ -63,19 +63,27 @@ ps1_git_with_rc()
 
     # any new untracked files?
     echo -n $(esc_tput setaf $white)'$(ps1_untracked)'$(esc_tput sgr0)
+}
 
-    # on next line, show previous command's return value
+ps1_rc()
+{
     echo
-    echo $(esc_tput bold)$(esc_tput setaf $cyan)'${prev_rc}> '$(esc_tput sgr0)
+    echo -n $(esc_tput bold)$(esc_tput setaf $white)'$?'
 }
 
 ps1_host_pwd()
 {
     user_host='\u@\h'
     working_dir='\w'
-    echo
+
     echo -n $(esc_tput bold)$(esc_tput setaf $green)${user_host}$(esc_tput sgr0)' '
     echo $(esc_tput bold)$(esc_tput setaf $blue)${working_dir}$(esc_tput sgr0)
 }
 
-export PS1=$(ps1_host_pwd)' '$(ps1_git_with_rc)$(esc_tput sgr0)
+ps1_prompt()
+{
+    echo
+    echo $(esc_tput bold)$(esc_tput setaf $cyan)'> '
+}
+
+export PS1=$(ps1_rc)' '$(ps1_host_pwd)' '$(ps1_git)$(ps1_prompt)$(esc_tput sgr0)
