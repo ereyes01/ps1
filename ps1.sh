@@ -14,25 +14,25 @@ esc_tput()
 ps1_branch()
 {
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+    git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
 
 ps1_unstaged()
 {
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
-    git diff --quiet &> /dev/null || echo -n '*'
+    git diff --quiet >/dev/null 2>&1 || echo -n '*'
 }
 
 ps1_staged()
 {
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
-    git diff --quiet --cached &> /dev/null || echo -n '*'
+    git diff --quiet --cached >/dev/null 2>&1 || echo -n '*'
 }
 
 ps1_untracked()
 {
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
-    git status --porcelain 2> /dev/null | grep -q ^?? && echo -n '*'
+    git status --porcelain 2>/dev/null | grep -q ^?? && echo -n '*'
 }
 
 ps1_git()
