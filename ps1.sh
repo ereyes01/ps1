@@ -14,14 +14,11 @@
 
 # To use in your .bashrc, source this file.
 
-bold_cyan="\033[01;36m"
-bold_red="\033[1;31m"
-bold_green="\033[1;32m"
-bold_blue="\033[1;34m"
-red="\033[0;31m"
-green="\033[0;32m"
-white="\033[0;37m"
-default_color="\033[00m"
+red='1'
+green='2'
+blue='4'
+cyan='6'
+white='7'
 
 ps1_branch()
 {
@@ -50,12 +47,21 @@ ps1_git_with_rc()
 {
     prev_rc=$?
 
-    user_host=${bold_green}'\u@\h'
-    working_dir=${bold_blue}'\w'
+    # branch
+    echo -n $(tput bold)$(tput setaf $cyan)$(ps1_branch)$(tput sgr0)' '
 
-    echo -e ${bold_cyan}$(ps1_branch)\
-            ${green}$(ps1_staged)${red}$(ps1_unstaged)${white}$(ps1_untracked)
-    echo -e ${bold_cyan}${prev_rc}'> '${default_color}
+    # any staged files?
+    echo -n $(tput setaf $green)$(ps1_staged)$(tput sgr0)
+
+    # any modified unstaged files?
+    echo -n $(tput setaf $red)$(ps1_unstaged)$(tput sgr0)
+
+    # any new untracked files?
+    echo -n $(tput setaf $white)$(ps1_untracked)$(tput sgr0)
+
+    # on next line, show previous command's return value
+    echo
+    echo $(tput bold)$(tput setaf $cyan)${prev_rc}'> '$(tput sgr0)
 }
 
 ps1_prefix()
@@ -63,8 +69,8 @@ ps1_prefix()
     user_host='\u@\h'
     working_dir='\w'
     echo
-    echo -n '\['${bold_green}'\]'${user_host}\
-            '\['${bold_blue}'\]'${working_dir}
+    echo -n $(tput sgr0)$(tput bold)$(tput setaf $green)${user_host}$(tput sgr0)' '
+    echo $(tput bold)$(tput setaf $blue)${working_dir}$(tput sgr0)
 }
 
 export PS1=$(ps1_prefix)' $(ps1_git_with_rc)'
