@@ -1,19 +1,5 @@
 #!/bin/sh
 
-# This script constructs a PS1 string so that your terminal prompt
-# appears as follows, with pretty colors that look nice on a black
-# background. Previous output is also padded from the prompt with an
-# empty line.
-
-#
-# user@host ~/my/working/dir (git branch)
-# 0> type command here
-
-# The 0 in the second line is the return value of the previous command.
-# If you're not in a git repository, you won't see the (git branch)
-
-# To use in your .bashrc, source this file.
-
 red='1'
 green='2'
 blue='4'
